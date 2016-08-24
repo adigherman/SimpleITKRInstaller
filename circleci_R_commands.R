@@ -1,9 +1,10 @@
 ## Placing the R commands in a script as it gets too messy
 ## to do it all on the command line
 
-## devtools install
-install.packages("devtools", lib="~/Rlibs", repo="http://cloud.r-project.org/")
-
+if (!require(devtools)) {
+  ## devtools install
+  install.packages("devtools", lib="~/Rlibs", repo="http://cloud.r-project.org/")
+}
 makej <- as.numeric(Sys.getenv("MAKE_J"))
 
 # set up the configure vars 
