@@ -6,7 +6,24 @@ if (!require(devtools)) {
   install.packages("devtools", lib="~/Rlibs", repo="http://cloud.r-project.org/")
 }
 makej <- as.numeric(Sys.getenv("MAKE_J"))
+# deal with missing entries
+makej <- max(makej, 1, na.rm=TRUE)
 
-# set up the configure vars 
-configvars <- paste0('--configure-vars="MAKEJ=', makej, ' RTESTON=ON USEDISTCC=1"')
-devtools::install("/home/ubuntu/SimpleITKRInstaller", args=configvars)
+## get the CC and CXX settings so we can set up distcc
+RCMD <- file.path(R.home("bin"), "R")
+args <- paste("--no-site-file", "--no-environ", "--no-save", 
+        "--no-restore", "--quiet", "CMD", "config", collapse=" ")
+argscc <- paste(RCMD, args, "CC", collapse=" ")
+argscxx <- paste(RCMD, args, "CXX", collapse=" ")
+
+CC <- system(argscc, intern=TRUE)
+CXX <- system(argscxx, intern=TRUE)
+
+# with distcc it gets too complicated to deal with all the quoting, so
+# pass CC and CXX via environment
+Sys.setenv(CC = paste("distcc", CC),
+           CXX= paste("distcc", CXX),
+           RTESTON="ON",
+           MAKEJ=makej)
+
+devtools::install("/home/ubuntu/SimpleITKRInstaller")
