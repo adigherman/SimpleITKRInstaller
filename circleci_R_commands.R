@@ -5,12 +5,9 @@ if (!require(devtools)) {
   ## devtools install
   install.packages("devtools", lib="~/Rlibs", repo="http://cloud.r-project.org/")
 }
-
-# Don't think we need to worry about this - distcc does it.
 makej <- as.numeric(Sys.getenv("MAKE_J"))
 # deal with missing entries
 makej <- max(makej, 1, na.rm=TRUE)
-
 
 ## get the CC and CXX settings so we can set up distcc
 RCMD <- file.path(R.home("bin"), "R")
@@ -29,6 +26,7 @@ ITKREPO <- Sys.getenv("ITK_REPOSITORY")
 Sys.setenv(CC = paste("distcc", CC),
            CXX= paste("distcc", CXX),
            RTESTON="ON",
+           MAKEJ=makej,
            DITK_REPOSITORY=paste0("-DITK_REPOSITORY=", ITKREPO))
 
 devtools::install("/home/ubuntu/SimpleITKRInstaller")
