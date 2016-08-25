@@ -29,6 +29,8 @@ dependencies:
     cache_directories:
         - "~/.ExternalData"
         - "~/Rlibs"
+    pre:
+        - cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${ITK_REPOSITORY} ]]; then git clone --bare https://ITK.org/ITK.git; fi && cd ${ITK_REPOSITORY} && git fetch origin
     post:
         - mkdir -p "${DISTCC_DIR}" && printf -- "--randomize localhost/2 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
     override:
