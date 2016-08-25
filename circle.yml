@@ -11,6 +11,7 @@ machine:
           ExternalData_OBJECT_STORES: ${HOME}/.ExternalData
           SIMPLEITK_BUILD_DIR: ${HOME}/SimpleITKRInstaller/SITK
           CMAKE_DOWNLOAD_FILE: cmake-3.6.0-Linux-x86_64.sh
+          ITK_REPOSITORY: ${ExternalData_OBJECT_STORES}/ITK.git
           DISTCC_TCP_CORK: "0"
           DISTCC_DIR: ${HOME}/.distcc
           MAKE_J: $(expr $CIRCLE_NODE_TOTAL \* 2 + 1)
@@ -30,7 +31,6 @@ dependencies:
         - "~/Rlibs"
     post:
         - mkdir -p "${DISTCC_DIR}" && printf -- "--randomize localhost/2 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
-
     override:
       - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then R -q --no-save --file=/home/ubuntu/SimpleITKRInstaller/circleci_R_commands.R; fi
 test:

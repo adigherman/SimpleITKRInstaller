@@ -19,11 +19,14 @@ argscxx <- paste(RCMD, args, "CXX", collapse=" ")
 CC <- system(argscc, intern=TRUE)
 CXX <- system(argscxx, intern=TRUE)
 
+
+ITKREPO <- Sys.getenv("ITK_REPOSITORY")
 # with distcc it gets too complicated to deal with all the quoting, so
 # pass CC and CXX via environment
 Sys.setenv(CC = paste("distcc", CC),
            CXX= paste("distcc", CXX),
            RTESTON="ON",
-           MAKEJ=makej)
+           MAKEJ=makej,
+           DITK_REPOSITORY=paste0("-DITK_REPOSITORY=", ITKREPO))
 
 devtools::install("/home/ubuntu/SimpleITKRInstaller")

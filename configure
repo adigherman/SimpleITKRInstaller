@@ -36,6 +36,9 @@ export RTESTON
 ## refers to multiple packages
 MAKEJ=${MAKEJ:-1}
 export MAKEJ
+
+
+
 ## All the building is going to happen in an SITK folder
 mkdir -p SITK
 (
@@ -57,6 +60,7 @@ mkdir -p SITK
         -DWRAP_CSHARP=OFF \
         -DBUILD_EXAMPLES=OFF \
         -DBUILD_TESTING=${RTESTON} \
+	${DITK_REPOSITORY} \
         ../SimpleITK/SuperBuild/ ||
     exit 1
 
