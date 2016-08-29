@@ -6,6 +6,7 @@ machine:
           - sudo apt-get update
           - sudo apt-get -y install r-base-dev
           - mkdir -p ${HOME}/Rlibs
+          - mkdir -p ${HOME}/.ssh_tmp
         environment:
           R_LIBS: /home/ubuntu/Rlibs
           ExternalData_OBJECT_STORES: ${HOME}/.ExternalData
