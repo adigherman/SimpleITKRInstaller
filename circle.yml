@@ -24,7 +24,7 @@ machine:
            - mkdir -p "${ExternalData_OBJECT_STORES}"
            - cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${CMAKE_DOWNLOAD_FILE} ]]; then curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}; fi
            - echo "y\n" | sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir
-           - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then mkdir -p .ssh && echo "Host *\nControlMaster auto\nControlPath ~/.ssh_tmp/master-%r@%h:%p\n" >> .ssh/config ; fi
+           - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then mkdir -p .ssh && printf -- "Host *\nControlMaster auto\nControlPath ~/.ssh_tmp/master-%%r@%%h:%%p\n" >> .ssh/config ; fi
 
 dependencies:
     cache_directories:
