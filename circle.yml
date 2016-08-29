@@ -24,6 +24,7 @@ machine:
            - mkdir -p "${ExternalData_OBJECT_STORES}"
            - cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${CMAKE_DOWNLOAD_FILE} ]]; then curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}; fi
            - echo "y\n" | sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir
+	   - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then mkdir -p .ssh && echo "Host *\nControlMaster auto\nControlPath ~/.ssh_tmp/master-%r@%h:%p\n" >> .ssh/config
 
 dependencies:
     cache_directories:
@@ -34,6 +35,7 @@ dependencies:
     post:
         - mkdir -p "${DISTCC_DIR}" && printf -- "--randomize localhost/2 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
     override:
+      - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do ssh -fMN ubuntu@node$i; fi
       - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then R -q --no-save --file=/home/ubuntu/SimpleITKRInstaller/circleci_R_commands.R; fi
 test:
     pre:
