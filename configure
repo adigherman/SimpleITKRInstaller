@@ -61,6 +61,7 @@ mkdir -p SITK
         -DBUILD_EXAMPLES=OFF \
         -DBUILD_TESTING=${RTESTON} \
 	${DITK_REPOSITORY} \
+        ${DCMAKE_LINKER} \
         ../SimpleITK/SuperBuild/ ||
     exit 1
 
