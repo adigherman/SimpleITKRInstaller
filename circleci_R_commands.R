@@ -27,7 +27,7 @@ Sys.setenv(CC = paste("distcc", CC),
            CXX= paste("distcc", CXX),
            RTESTON="ON",
            MAKEJ=makej,
-           LD=paste("distcc", "ld"),
+           DCMAKE_LINKER=paste("distcc", "ld"),
            DITK_REPOSITORY=paste0("-DITK_REPOSITORY=", ITKREPO))
 
 devtools::install("/home/ubuntu/SimpleITKRInstaller")
