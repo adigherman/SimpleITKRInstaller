@@ -29,7 +29,7 @@ Sys.setenv(CC = paste("distcc", CC),
            MAKEJ=makej,
            DCMAKE_LINKER="-DCMAKE_LINKER:FILEPATH=/usr/bin/distcc",
            DCMAKE_EXE_LINKER_FLAGS="-DCMAKE_EXE_LINKER_FLAGS=/usr/bin/ld",
-           DCMAKE_MODULE_LINKER_FLAGS="-DCMAKE_MODULE_LINKER_FLAGS=/usr/bin/ld"
+           DCMAKE_MODULE_LINKER_FLAGS="-DCMAKE_MODULE_LINKER_FLAGS=/usr/bin/ld",
            DITK_REPOSITORY=paste0("-DITK_REPOSITORY=", ITKREPO))
 
 devtools::install("/home/ubuntu/SimpleITKRInstaller")
