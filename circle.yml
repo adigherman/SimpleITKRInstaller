@@ -5,7 +5,7 @@ machine:
           - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
           - sudo apt-get update
           - sudo apt-get -y install r-base-dev
-          - mkdir -p ${HOME}/Rlibs
+          - mkdir -p ${HOME}/Rlibs ${HOME}/DISTCC_SRC
           - mkdir -p ${HOME}/.ssh_tmp
         environment:
           R_LIBS: /home/ubuntu/Rlibs
@@ -15,11 +15,13 @@ machine:
           ITK_REPOSITORY: ${ExternalData_OBJECT_STORES}/ITK.git
           DISTCC_TCP_CORK: "0"
           DISTCC_DIR: ${HOME}/.distcc
+          DISTCC_SRC: ${HOME}/DISTCC_SRC
           MAKE_J: $(expr $CIRCLE_NODE_TOTAL + 1)
           SITK_NOSHOW: "1"
 
         post:
-           - sudo apt-get remove cmake && sudo apt-get install distcc
+           - sudo apt-get remove cmake
+           - sudo ${HOME}/SimpleITKRInstaller/fetch_build_distcc.sh
            - sudo sed -i.bak s/STARTDISTCC=\"false\"/STARTDISTCC=\"true\"/g /etc/default/distcc && sudo /etc/init.d/distcc start
            - mkdir -p "${DISTCC_DIR}" && printf -- "localhost/1 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
            - mkdir -p "${ExternalData_OBJECT_STORES}"
@@ -31,8 +33,11 @@ dependencies:
     cache_directories:
         - "~/.ExternalData"
         - "~/Rlibs"
+        - "~/DISTCC_SRC"
     pre:
         - cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${ITK_REPOSITORY} ]]; then git clone --bare https://ITK.org/ITK.git; fi && cd ${ITK_REPOSITORY} && git fetch origin
+        - if [ $CIRCLE_NODE_INDEX -ne 0 ]; then rsync -ravz -e ssh ubuntu@node0:${DISTCC_SRC}/ ${DISTCC_SRC} && cd ${DISTCC_SRC} && sudo make install; fi:
+          parallel: true
     post:
         - mkdir -p "${DISTCC_DIR}" && printf -- "--randomize localhost/1 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
     override:
