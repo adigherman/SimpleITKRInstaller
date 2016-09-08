@@ -7,6 +7,7 @@ if [ -d "${DISTCC_SRC}" ] ; then
   git clone https://github.com/distcc/distcc &&
   cd distcc &&
   git checkout 3.2 &&
+  ./autogen.sh &&
   ./configure &&
   make )
 else
