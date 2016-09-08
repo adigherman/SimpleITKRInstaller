@@ -8,7 +8,7 @@ if [ -d "${DISTCC_SRC}" ] ; then
   cd distcc &&
   git checkout 3.2 &&
   ./autogen.sh &&
-  ./configure &&
+  ./configure --disable-pump-mode --prefix=/usr/local/distcc&&
   make )
 else
     echo "Missing ${DISTCC_SRC}"

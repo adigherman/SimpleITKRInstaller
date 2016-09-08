@@ -18,6 +18,7 @@ machine:
           DISTCC_TCP_CORK: "0"
           DISTCC_DIR: ${HOME}/.distcc
           DISTCC_SRC: ${HOME}/DISTCC_SRC
+          DISTCC_INST: /usr/local/distcc/
           MAKE_J: $(expr $CIRCLE_NODE_TOTAL + 1)
           SITK_NOSHOW: "1"
 
@@ -25,7 +26,9 @@ machine:
            - sudo apt-get remove cmake
            - ${HOME}/SimpleITKRInstaller/fetch_and_build_distcc.sh
            - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then cd ${DISTCC_SRC}/distcc && sudo make install; fi
-           - sudo sed -i.bak s/STARTDISTCC=\"false\"/STARTDISTCC=\"true\"/g /etc/default/distcc && sudo /etc/init.d/distcc start
+           - if [ $CIRCLE_NODE_INDEX -ne 0 ]; then rsync -ravz -e ssh ubuntu@node0:${DISTCC_SRC}/ ${DISTCC_SRC} && cd ${DISTCC_SRC}/distcc && sudo make install; fi:
+               parallel: true
+           - sudo ${DISTCC_INST}/bin/distccd --daemon --allow 127.0.0.1 --listen 127.0.0.1
            - mkdir -p "${DISTCC_DIR}" && printf -- "localhost/1 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
            - mkdir -p "${ExternalData_OBJECT_STORES}"
            - cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${CMAKE_DOWNLOAD_FILE} ]]; then curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}; fi
@@ -39,8 +42,6 @@ dependencies:
         - "~/DISTCC_SRC"
     pre:
         - cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${ITK_REPOSITORY} ]]; then git clone --bare https://ITK.org/ITK.git; fi && cd ${ITK_REPOSITORY} && git fetch origin
-        - if [ $CIRCLE_NODE_INDEX -ne 0 ]; then rsync -ravz -e ssh ubuntu@node0:${DISTCC_SRC}/ ${DISTCC_SRC} && cd ${DISTCC_SRC}/distcc && sudo make install; fi:
-            parallel: true
     post:
         - mkdir -p "${DISTCC_DIR}" && printf -- "--randomize localhost/1 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
     override:
