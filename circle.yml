@@ -21,7 +21,7 @@ machine:
           DISTCC_INST: /usr/local/distcc/
           MAKE_J: $(expr $CIRCLE_NODE_TOTAL + 1)
           SITK_NOSHOW: "1"
-
+          PATH: ${PATH}:${DISTCC_INST}/bin/
         post:
            - sudo apt-get remove cmake
            - ${HOME}/SimpleITKRInstaller/fetch_and_build_distcc.sh
