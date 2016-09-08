@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 if [ -d "${DISTCC_SRC}" ] ; then
 
@@ -9,5 +9,6 @@ if [ -d "${DISTCC_SRC}" ] ; then
   ./configure
   make )
 else
-    echo "Missing DISTCC_SRC"
+    echo "Missing ${DISTCC_SRC}"
+    exit 1
 fi
