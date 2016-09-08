@@ -21,7 +21,7 @@ machine:
 
         post:
            - sudo apt-get remove cmake
-           - sudo ${HOME}/SimpleITKRInstaller/fetch_build_distcc.sh
+           - sudo ${HOME}/SimpleITKRInstaller/fetch_and_build_distcc.sh
            - sudo sed -i.bak s/STARTDISTCC=\"false\"/STARTDISTCC=\"true\"/g /etc/default/distcc && sudo /etc/init.d/distcc start
            - mkdir -p "${DISTCC_DIR}" && printf -- "localhost/1 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
            - mkdir -p "${ExternalData_OBJECT_STORES}"
@@ -36,8 +36,9 @@ dependencies:
         - "~/DISTCC_SRC"
     pre:
         - cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${ITK_REPOSITORY} ]]; then git clone --bare https://ITK.org/ITK.git; fi && cd ${ITK_REPOSITORY} && git fetch origin
+        - if [ $CIRCLE_NODE_INDEX -eq 0 ]; then cd ${DISTCC_SRC} && sudo make install; fi
         - if [ $CIRCLE_NODE_INDEX -ne 0 ]; then rsync -ravz -e ssh ubuntu@node0:${DISTCC_SRC}/ ${DISTCC_SRC} && cd ${DISTCC_SRC} && sudo make install; fi:
-          parallel: true
+            parallel: true
     post:
         - mkdir -p "${DISTCC_DIR}" && printf -- "--randomize localhost/1 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
     override:
