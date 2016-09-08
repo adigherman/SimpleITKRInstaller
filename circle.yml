@@ -22,7 +22,7 @@ machine:
 
         post:
            - sudo apt-get remove cmake
-           - sudo ${HOME}/SimpleITKRInstaller/fetch_and_build_distcc.sh
+           - ${HOME}/SimpleITKRInstaller/fetch_and_build_distcc.sh
            - sudo sed -i.bak s/STARTDISTCC=\"false\"/STARTDISTCC=\"true\"/g /etc/default/distcc && sudo /etc/init.d/distcc start
            - mkdir -p "${DISTCC_DIR}" && printf -- "localhost/1 --localslots=1\n" > "${DISTCC_DIR}/hosts" && for ((i=1;i<CIRCLE_NODE_TOTAL;i++)); do printf "ubuntu@node$i/2\n" >> "${DISTCC_DIR}/hosts"; done
            - mkdir -p "${ExternalData_OBJECT_STORES}"
