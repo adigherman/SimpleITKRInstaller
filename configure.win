@@ -1,0 +1,65 @@
+#!/bin/bash -x
+
+# configure script that will fetch and build SimpleITK, then move the results
+# to somewhere that R can install. It takes a long time and uses
+# a substantial amount of disk space
+#
+# Requires git and cmake and ninja
+#
+export SimpleITKGit=https://github.com/SimpleITK/SimpleITK
+export SITKTAG=v1.0.0
+
+export PKGBASED=$(pwd)
+echo ${PKGBASED}
+
+## make sure we've got the correct R
+[ -z "$R_HOME" ] || ( echo "Environment variable \"R_HOME\" is not set!" && exit 1)
+RCALL="${R_HOME}/bin/R"
+export RCALL
+
+## Get rid of the colons
+export CMAKE_EXTRA_FLAGS=${CMAKE_EXTRA_FLAGS//;/ }
+
+
+RR=$(which R) ## can modify this
+R64=$(dirname "$RR")/x64/R.exe
+R64DLL=$(dirname "$R64")/R.dll
+
+## Checks for installed software
+
+[ -n "$(which cmake)" ] || echo "Cant find cmake" && exit 1
+[ -n "$(which git)" ] || echo "Cant find git" && exit 1
+[ -n "$(which ninja)" ] || echo "Cant find ninja" && exit 1
+
+
+CXXPATH=$(which c++)
+
+[[ $CXXPATH =~ msys64/mingw64/bin ]] || echo "Can't find an msys2 compiler" && exit 1  
+
+## All the building is going to happen in an SITK folder
+mkdir -p SITK
+(
+    cd SITK &&
+    [ -d SimpleITK ] ||
+      ( git clone  ${SimpleITKGit} &&
+          cd SimpleITK &&
+          git checkout  ${SITKTAG} ) || exit 1
+
+    mkdir -p B &&
+    cd B &&
+    cmake -G Ninja $CMAKE_EXTRA_FLAGS \
+        -DWRAP_DEFAULT=OFF\
+        -DWRAP_R=ON \
+        -DBUILD_EXAMPLES=OFF \
+        -DBUILD_TESTING=OFF \
+	-DCMAKE_CXX_FLAGS="--param ggc-min-expand=0 --param ggc-min-heapsize=2648000" \
+	-DCMAKE_ _LINKER_FLAG="-s -libgcc-.."
+        ../SimpleITK/SuperBuild/ ||
+    exit 1
+
+    echo "Parallel build using -j${MAKEJ}"
+    ninja -j${MAKEJ} &&
+    # Use R to do the move to avoid system specific issues.
+    ${RCALL} -f ${PKGBASED}/sitkmove.R --args SimpleITK-build/Wrapping/R/Packaging/SimpleITK/ ${PKGBASED} ||
+    exit 1
+)
