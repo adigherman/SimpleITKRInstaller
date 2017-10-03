@@ -41,7 +41,8 @@ jobs:
           working_directory: ~/SimpleITKRInstaller/SITK/Build/SimpleITK-build/
           environment:
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
-	     PARALLEL_LEVEL: 4
+             PARALLEL_LEVEL: 4
              CTEST_OUTPUT_ON_FAILURE: 1
-	  command: |
+          command: |
              ctest -V
+
