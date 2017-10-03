@@ -15,8 +15,8 @@ jobs:
           name: System Dependencies
           command: |
             sudo apt-get -y install software-properties-common apt-transport-https
-            sudo add-apt-repository -y "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/"
-            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+            sudo add-apt-repository -y "deb https://cloud.r-project.org/bin/linux/debian jessie-cran34/"
+            sudo apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF'
             sudo apt-get update
             sudo apt-get -y install r-base-dev rsync
             mkdir ~/Rlibs
