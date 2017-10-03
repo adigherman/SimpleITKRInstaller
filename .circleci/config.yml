@@ -28,11 +28,19 @@ jobs:
              R -e 'install.packages(c("devtools", "callr"), repo="http://cloud.r-project.org/")'
              R -e 'devtools::install_github("hadley/devtools", ref="1.13.0")'
       - run:
-          name: Build SimpleITK R Package
+          name: Build SimpleITK R Package - many cores, which will fail after a while
+          no_output_timeout: 20.0m
+	  shell: +e
+          environment:
+             MAKEJ: 5
+             ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
+          command: |
+             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=MAKEJ=5 CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))"
+      - run:
+          name: Build SimpleITK R Package - few cores.
           no_output_timeout: 20.0m
           environment:
              MAKEJ: 2
-             RTESTON: ON
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
           command: |
              R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=MAKEJ=2 CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))"
