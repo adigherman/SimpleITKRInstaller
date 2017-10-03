@@ -36,7 +36,7 @@ jobs:
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
           command: |
              for i in {1..3} ; do
-	       export MAKEJ=$[ ${MAKEJ} - $i ]
+               export MAKEJ=$[ ${MAKEJ} - $i ]
                R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))" || true
              done
       - run:
