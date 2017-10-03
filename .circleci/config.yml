@@ -39,7 +39,7 @@ jobs:
           name: Test SimpleITK R Package
           no_output_timeout: 20.0m
           working_directory: ~/SimpleITKRInstaller/SITK/Build/SimpleITK-build/
-             environment:
+          environment:
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
 	     PARALLEL_LEVEL: 4
              CTEST_OUTPUT_ON_FAILURE: 1
