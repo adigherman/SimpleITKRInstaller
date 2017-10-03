@@ -32,20 +32,20 @@ jobs:
           no_output_timeout: 20.0m
           shell: /bin/bash +e
           environment:
-             MAKEJ: 5
+             MAKEJ: 6
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
           command: |
              for i in {1..3} ; do
-               R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=MAKEJ=5 CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))" || true
+	       export MAKEJ=$[ ${MAKEJ} - $i ]
+               R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))" || true
              done
       - run:
-          name: Build SimpleITK R Package - few cores.
+          name: Build SimpleITK R Package - 1 core.
           no_output_timeout: 20.0m
           environment:
-             MAKEJ: 2
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
           command: |
-             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=MAKEJ=2 CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))"
+             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))"
       - run:
           name: Test SimpleITK R Package
           no_output_timeout: 20.0m
