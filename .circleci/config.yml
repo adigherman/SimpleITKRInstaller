@@ -18,24 +18,24 @@ jobs:
             sudo add-apt-repository -y "deb https://cloud.r-project.org/bin/linux/debian jessie-cran34/"
             sudo apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF'
             sudo apt-get update
-            sudo apt-get -y install r-base-dev rsync
+            sudo apt-get -y install r-base-dev rsync libssh2-1-dev
             mkdir ~/Rlibs
             sudo pip install numpy scikit-ci-addons
             ci_addons circle/install_cmake.py 3.7.2
       - run:
           name: Install R Package Dependencies
           command: |
-             R -e 'install.packages("devtools", repo="http://cloud.r-project.org/")'
-             R -e 'devtools::install_github("hadley/devtools")'
+             R -e 'install.packages(c("devtools", "callr"), repo="http://cloud.r-project.org/")'
+             R -e 'devtools::install_github("hadley/devtools", ref="1.13.0")'
       - run:
           name: Build SimpleITK R Package
           no_output_timeout: 20.0m
           environment:
-             MAKEJ: 3
+             MAKEJ: 2
              RTESTON: ON
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
           command: |
-             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=MAKEJ=3 CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))"
+             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=MAKEJ=2 CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON'))"
       - run:
           name: Test SimpleITK R Package
           no_output_timeout: 20.0m
