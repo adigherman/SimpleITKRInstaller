@@ -17,7 +17,7 @@ jobs:
             sudo apt-get -y install software-properties-common apt-transport-https
             sudo add-apt-repository -y "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/"
             sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
-	    sudo apt-get update
+            sudo apt-get update
             sudo apt-get -y install r-base-dev rsync
             mkdir ~/Rlibs
             sudo pip install numpy scikit-ci-addons
@@ -36,9 +36,9 @@ jobs:
           command: |
              R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars="MAKEJ=3"'))"
       - run:
-      	  name: Test SimpleITK R Package
+          name: Test SimpleITK R Package
           no_output_timeout: 20.0m
-	  working_directory: ~/SimpleITKRInstaller/SITK/Build/SimpleITK-build/
+          working_directory: ~/SimpleITKRInstaller/SITK/Build/SimpleITK-build/
              environment:
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
 	     PARALLEL_LEVEL: 4
