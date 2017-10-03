@@ -29,9 +29,9 @@ jobs:
           name: Build SimpleITK R Package
           no_output_timeout: 20.0m
           environment:
-             MAKEJ: 4
+             MAKEJ: 3
              RTESTON: ON
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
           command: |
-             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars="MAKEJ=5"'))"
-    
+             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars="MAKEJ=3"'))"
+ 
