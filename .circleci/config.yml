@@ -38,7 +38,7 @@ jobs:
           command: |
              for i in {1..5} ; do
                export MAKEJ=$[ ${MAKEJ} - $i ]
-               R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON\\ -DBUILD_SHARED_LIBS=ON'))" || true
+               R -e 'devtools::install(c("/home/circleci/SimpleITKRInstaller"), args=c("--configure-vars=CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON\\ -DBUILD_SHARED_LIBS=ON"))' || true
              done
       - run:
           name: Build SimpleITK R Package - 1 core.
@@ -46,7 +46,7 @@ jobs:
           environment:
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
           command: |
-             R -e "devtools::install(c('/home/circleci/SimpleITKRInstaller'), args=c('--configure-vars=CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON\\ -DBUILD_SHARED_LIBS=ON'))"
+             R -e 'devtools::install(c("/home/circleci/SimpleITKRInstaller"), args=c("--configure-vars=CMAKE_EXTRA_FLAGS=-DBUILD_TESTING=ON\\ -DBUILD_SHARED_LIBS=ON"))'
       - run:
           name: Test SimpleITK R Package
           no_output_timeout: 20.0m
