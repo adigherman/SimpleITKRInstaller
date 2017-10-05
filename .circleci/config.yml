@@ -7,6 +7,7 @@ jobs:
     resource_class: large
     environment:
       R_LIBS: /home/circleci/Rlibs
+      LD_LIBRARY_PATH: /home/circleci/SimpleITKRInstaller/SITK/Build/ITK-prefix/lib/:/home/circleci/SimpleITKRInstaller/SITK/Build/SimpleITK-build/lib
       ExternalData_OBJECT_STORES: /home/circleci/.ExternalData
     steps:
       - checkout:
@@ -55,7 +56,6 @@ jobs:
              ITK_GLOBAL_DEFAULT_NUMBER_OF_THREAD: 2
              PARALLEL_LEVEL: 4
              CTEST_OUTPUT_ON_FAILURE: 1
-	     LD_LIBRARY_PATH: /home/circleci/SimpleITKRInstaller/SITK/Build/ITK-prefix/lib/:/home/circleci/SimpleITKRInstaller/SITK/Build/SimpleITK-build/lib
           command: |
              ctest -V
 
