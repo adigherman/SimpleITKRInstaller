@@ -36,6 +36,8 @@ export MAKEJ
 
 [ -n "$CMAKE_EXTRA_FLAGS" ] && echo "Extra flags for cmake: $CMAKE_EXTRA_FLAGS"
 
+## Add the extra flags at the end, so they over-ride our defaults
+
 ## All the building is going to happen in an SITK folder
 mkdir -p SITK
 (
@@ -47,11 +49,11 @@ mkdir -p SITK
 
     mkdir -p Build &&
     cd Build &&
-    cmake $CMAKE_EXTRA_FLAGS \
+    cmake -DBUILD_TESTING=OFF \
         -DWRAP_DEFAULT=OFF\
         -DWRAP_R=ON \
         -DBUILD_EXAMPLES=OFF \
-        -DBUILD_TESTING=OFF \
+	$CMAKE_EXTRA_FLAGS \
         ../SimpleITK/SuperBuild/ ||
     exit 1
 
