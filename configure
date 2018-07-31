@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # configure script that will fetch and build SimpleITK, then move the results
 # to somewhere that R can install. It takes a long time and uses
@@ -6,6 +6,14 @@
 #
 # Requires git and cmake
 #
+# This script has 3 functions
+# 1) Fetch all the dependencies using git and build. For use with devtools or a local install.
+# 2) Create a source package for CRAN by performing step 1 and cleaning up after.
+# 3) Build the source package from CRAN.
+#
+# The main differences between the functionality is captured in the sitkmove.R script.
+#
+
 export SimpleITKGit=https://github.com/SimpleITK/SimpleITK
 export SITKTAG=v1.1.0
 
@@ -37,9 +45,23 @@ if [ -z "${MAKEJ}" ] ; then
 fi
 
 ## All the building is going to happen in an SITK folder
-mkdir -p SITK
+SITKSRCDIR=src/SITK
+export SITKSRCDIR
+mkdir -p ${SITKSRCDIR}
+
+FULLSOURCE=0
+[ -d ${SITKSRCDIR}/SimpleITK ] && FULLSOURCE=1
+export FULLSOURCE
+echo $FULLSOURCE
+
+# if we are in a full source package then we don't need to download
+# manuals or test images
+FORBID_DOWNLOADS=
+[ ${FULLSOURCE} = 1 ] && FORBID_DOWNLOAD="-DSITK_FORBID_DOWNLOADS=ON"
+export FORBID_DOWNLOADS
+
 (
-    cd SITK &&
+    cd ${SITKSRCDIR} &&
     [ -d SimpleITK ] ||
       ( git clone  ${SimpleITKGit} &&
           cd SimpleITK &&
@@ -51,6 +73,7 @@ mkdir -p SITK
         -DWRAP_DEFAULT=OFF\
         -DWRAP_R=ON \
         -DBUILD_EXAMPLES=OFF \
+        ${FORBID_DOWNLOADS} \
         -DBUILD_TESTING=OFF \
         ../SimpleITK/SuperBuild/ ||
     exit 1
@@ -58,6 +81,8 @@ mkdir -p SITK
     echo "Parallel build using -j${MAKEJ}"
     make -j${MAKEJ} &&
     # Use R to do the move to avoid system specific issues.
-    ${RCALL} -f ${PKGBASED}/sitkmove.R --args SimpleITK-build/Wrapping/R/Packaging/SimpleITK/ ${PKGBASED} ||
+    ${RCALL} -f ${PKGBASED}/sitkmove.R --args SimpleITK-build/Wrapping/R/Packaging/SimpleITK/ ${PKGBASED} ${FULLSOURCE} ||
     exit 1
+
+
 )
