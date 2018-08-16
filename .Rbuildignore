@@ -1,4 +1,7 @@
 .circleci/
-.git/
-src/Build/
+^\.git/
+src/SITK/Build/
 src/SimpleITK.so
+^.*\.sha512$
+^src/SITK/SimpleITK/\..+$
+^src/SITK/SimpleITK/SuperBuild/.ExternalSource$

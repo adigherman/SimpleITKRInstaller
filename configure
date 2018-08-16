@@ -16,6 +16,7 @@
 
 export SimpleITKGit=https://github.com/SimpleITK/SimpleITK
 export SITKTAG=v1.1.0
+export SITKTAG=f7debf94174f69960d5b47e34a6b9397a53c6770
 
 export PKGBASED=$(pwd)
 echo ${PKGBASED}
@@ -78,11 +79,11 @@ export FORBID_DOWNLOADS
         ../SimpleITK/SuperBuild/ ||
     exit 1
 
-    echo "Parallel build using -j${MAKEJ}"
-    make -j${MAKEJ} &&
+    #echo "Parallel build using -j${MAKEJ}"
+    #make -j${MAKEJ} &&
     # Use R to do the move to avoid system specific issues.
-    ${RCALL} -f ${PKGBASED}/sitkmove.R --args SimpleITK-build/Wrapping/R/Packaging/SimpleITK/ ${PKGBASED} ${FULLSOURCE} ||
-    exit 1
+    #${RCALL} -f ${PKGBASED}/sitkmove.R --args SimpleITK-build/Wrapping/R/Packaging/SimpleITK/ ${PKGBASED} ${FULLSOURCE} ||
+    #exit 1
 
 
 )

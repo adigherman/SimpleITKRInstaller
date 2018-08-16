@@ -1,0 +1,13 @@
+
+
+.PHONY: all sitklibs
+
+all: $(SHLIB)
+
+$(SHLIB): sitkcp
+
+sitkcp : sitklibs
+	("$(R_HOME)/bin$(R_ARCH_BIN)/Rscript" ./scripts/sitkmove.R SITK/Build/SimpleITK-build/Wrapping/R/Packaging/SimpleITK ../ )
+	
+sitklibs:
+	(cd SITK/Build; make ${MAKEJ})
